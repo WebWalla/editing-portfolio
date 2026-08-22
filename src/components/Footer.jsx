@@ -13,7 +13,7 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5 lg:justify-end">
           <a href="https://instagram.com/sk_cuts8" target="_blank" rel="noreferrer" className="transition hover:text-[#FFB000]">Instagram</a>
-          <a href="mailto:shanteshworks@gmail.com" className="transition hover:text-[#FFB000]">Email</a>
+          <a href="mailto:shanteshedits@gmail.com" className="transition hover:text-[#FFB000]">Email</a>
         </div>
       </div>
 

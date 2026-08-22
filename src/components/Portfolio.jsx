@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Play, X } from 'lucide-react'
 import { useState } from 'react'
-import { publishedProjects } from '../data/publishedProjects'
+import { publishedProjects, sortProjects } from '../data/publishedProjects'
 import { useUploadedProjects } from '../data/projectStore'
 
 const filterOptions = ['All', 'Esports', 'Montages', 'Reels', 'Shorts', 'Gaming']
@@ -38,18 +38,17 @@ export function VideoPreview({ project, controls = false }) {
 
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('All')
-  const [showAllProjects, setShowAllProjects] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedVideoRatio, setSelectedVideoRatio] = useState(null)
   const { projects: uploadedProjects, deletedIds } = useUploadedProjects()
   const managedIds = new Set(uploadedProjects.map((project) => project.id))
   const currentProjects = publishedProjects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))
-  const allProjects = [...uploadedProjects, ...currentProjects]
+  const allProjects = sortProjects([...uploadedProjects, ...currentProjects])
 
   const filteredProjects = activeFilter === 'All'
     ? allProjects
     : allProjects.filter((project) => (project.categories || [project.category]).includes(activeFilter))
-  const displayedProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, 6)
+  const displayedProjects = filteredProjects.slice(0, 6)
 
   return (
     <section id="works" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -68,7 +67,6 @@ export default function Portfolio() {
             type="button"
             onClick={() => {
               setActiveFilter(option)
-              setShowAllProjects(false)
             }}
             className={`rounded-full border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] transition sm:px-4 sm:text-xs sm:tracking-[0.2em] ${
               activeFilter === option
@@ -141,16 +139,6 @@ export default function Portfolio() {
           ))}
         </motion.div>
       </AnimatePresence>
-
-      {filteredProjects.length > 6 && (
-        <button
-          type="button"
-          onClick={() => setShowAllProjects((current) => !current)}
-          className="mx-auto mt-8 flex items-center justify-center rounded-full border border-[#FFB000]/50 bg-[#FFB000]/10 px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#FFB000] transition hover:bg-[#FFB000] hover:text-[#050505]"
-        >
-          {showAllProjects ? 'Show Less' : 'Show More'}
-        </button>
-      )}
 
       <a href="#works-all" className="mx-auto mt-8 flex w-fit items-center justify-center rounded-full border border-[#FFB000]/50 bg-[#FFB000]/10 px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#FFB000] transition hover:bg-[#FFB000] hover:text-[#050505]">Show All Work</a>
 
