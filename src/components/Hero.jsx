@@ -45,15 +45,6 @@ export default function Hero() {
               View My Work <ArrowRight size={16} />
             </a>
 
-            <a
-              href="#works"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-white/12 bg-white/5 px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:border-[#FFB000]/50 hover:text-[#FFB000] sm:w-auto"
-            >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#FFB000] text-[#050505]">
-                <Play size={12} fill="currentColor" />
-              </span>
-              View My Work
-            </a>
           </div>
         </motion.div>
 
@@ -72,10 +63,6 @@ export default function Hero() {
                 {latestProject && <video src={latestProject.video} muted loop autoPlay playsInline preload="metadata" aria-label={`${latestProject.title} latest edit preview`} className="absolute inset-0 h-full w-full object-cover opacity-70" />}
                 <div className="absolute inset-0 opacity-30 [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:40px_40px]" />
                 <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050505] via-[#050505]/70 to-transparent" />
-                <div className="absolute left-8 top-8 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-[10px] uppercase tracking-[0.28em] text-white/75">
-                  Portfolio Reel
-                </div>
-
                 <div className="absolute inset-x-0 bottom-0 px-6 pb-8 pt-12">
                   <div className="flex items-center justify-between gap-4">
                     <div>

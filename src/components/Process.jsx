@@ -17,7 +17,7 @@ export default function Process() {
 
       <div className="relative">
         <div className="absolute left-1/2 top-8 hidden h-px w-[78%] -translate-x-1/2 bg-gradient-to-r from-transparent via-[#FFB000]/40 to-transparent lg:block" />
-        <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-5 md:grid-cols-2 xl:grid-cols-4">
           {processSteps.map((step, index) => (
             <motion.div
               key={step}
@@ -25,10 +25,10 @@ export default function Process() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.5, delay: index * 0.08 }}
-              className="relative rounded-[1.5rem] border border-white/10 bg-[#0c0c0c] p-6"
+              className="relative rounded-[1.25rem] border border-white/10 bg-[#0c0c0c] p-4 sm:rounded-[1.5rem] sm:p-6"
             >
               <div className="absolute -top-3 left-6 flex h-8 w-8 items-center justify-center rounded-full bg-[#FFB000] text-xs font-black text-[#050505]">0{index + 1}</div>
-              <div className="pt-4 text-2xl font-black tracking-[-0.06em] text-white">{step}</div>
+              <div className="pt-4 text-lg font-black leading-tight tracking-[-0.04em] text-white sm:text-2xl">{step}</div>
             </motion.div>
           ))}
         </div>

@@ -43,7 +43,7 @@ function AnimatedNumber({ value, suffix }) {
 export default function Stats() {
   return (
     <section className="border-y border-white/10 bg-[#0b0b0b]">
-      <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-2 sm:px-6 lg:grid-cols-4 lg:gap-8 lg:px-8 lg:py-10">
+      <div className="mx-auto grid max-w-7xl grid-cols-2 gap-x-3 gap-y-8 px-4 py-8 sm:gap-6 sm:px-6 lg:grid-cols-4 lg:gap-8 lg:px-8 lg:py-10">
         {stats.map((stat) => (
           <motion.div
             key={stat.label}
@@ -54,7 +54,7 @@ export default function Stats() {
             className="flex flex-col items-center gap-3 text-center"
           >
             <AnimatedNumber value={stat.value} suffix={stat.suffix} />
-            <p className="text-sm uppercase tracking-[0.18em] text-white/65">{stat.label}</p>
+            <p className="text-center text-[11px] uppercase tracking-[0.14em] text-white/65 sm:text-sm sm:tracking-[0.18em]">{stat.label}</p>
           </motion.div>
         ))}
       </div>

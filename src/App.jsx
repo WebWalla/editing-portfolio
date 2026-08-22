@@ -12,9 +12,11 @@ import Process from './components/Process'
 import Skills from './components/Skills'
 import Stats from './components/Stats'
 import Tools from './components/Tools'
+import WorksPage from './components/WorksPage'
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(() => window.location.hash === '#admin')
+  const [isWorksPage, setIsWorksPage] = useState(() => window.location.hash === '#works-all')
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('sk-theme')
     return saved || 'dark'
@@ -26,12 +28,16 @@ function App() {
   }, [theme])
 
   useEffect(() => {
-    const handleHashChange = () => setIsAdmin(window.location.hash === '#admin')
+    const handleHashChange = () => {
+      setIsAdmin(window.location.hash === '#admin')
+      setIsWorksPage(window.location.hash === '#works-all')
+    }
     window.addEventListener('hashchange', handleHashChange)
     return () => window.removeEventListener('hashchange', handleHashChange)
   }, [])
 
   if (isAdmin) return <Admin />
+  if (isWorksPage) return <WorksPage />
 
   return (
     <div className="min-h-screen bg-[var(--bg)] text-[var(--text)] antialiased">

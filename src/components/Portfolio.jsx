@@ -6,6 +6,36 @@ import { useUploadedProjects } from '../data/projectStore'
 
 const filterOptions = ['All', 'Esports', 'Montages', 'Reels', 'Shorts', 'Gaming']
 
+export function VideoPreview({ project, controls = false }) {
+  const [poster, setPoster] = useState(project.thumbnail || '')
+
+  const captureFirstFrame = (event) => {
+    if (poster || !event.currentTarget.videoWidth) return
+    const video = event.currentTarget
+    const canvas = document.createElement('canvas')
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height)
+    setPoster(canvas.toDataURL('image/jpeg', 0.8))
+  }
+
+  return (
+    <video
+      src={project.video}
+      poster={poster || undefined}
+      muted
+      loop
+      autoPlay
+      playsInline
+      preload="auto"
+      controls={controls}
+      onLoadedData={captureFirstFrame}
+      aria-label={`${project.title} preview`}
+      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+    />
+  )
+}
+
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('All')
   const [selectedProject, setSelectedProject] = useState(null)
@@ -53,7 +83,7 @@ export default function Portfolio() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.3 }}
-          className="grid gap-4 sm:gap-5 md:grid-cols-2 xl:grid-cols-3"
+          className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 sm:grid sm:gap-5 sm:overflow-visible sm:pb-0 md:grid-cols-2 xl:grid-cols-3"
         >
           {filteredProjects.map((project, index) => (
             <motion.article
@@ -62,22 +92,12 @@ export default function Portfolio() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: index * 0.05 }}
               whileHover={{ y: -8 }}
-              className="group relative overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0b0b0b]"
+              className="group relative min-w-full snap-start overflow-hidden rounded-[1.5rem] border border-white/10 bg-[#0b0b0b] sm:min-w-0"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
-                <video
-                  src={project.video}
-                  poster={project.thumbnail}
-                  muted
-                  loop
-                  autoPlay
-                  playsInline
-                  preload="metadata"
-                  aria-label={`${project.title} preview`}
-                  className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                />
+                <VideoPreview project={project} />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#050505]/80 via-[#050505]/10 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-5">
+                <div className="absolute inset-x-0 bottom-0 hidden items-end justify-between p-5 sm:flex">
                   <div>
                     <p className="text-[10px] uppercase tracking-[0.25em] text-[#FFB000]">{project.category}</p>
                     <h3 className="mt-2 text-2xl font-black tracking-[-0.06em] text-white">{project.title}</h3>
@@ -95,10 +115,29 @@ export default function Portfolio() {
                   </button>
                 </div>
               </div>
+              <div className="flex items-center justify-between gap-3 p-4 sm:hidden">
+                <div className="min-w-0">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-[#FFB000]">{project.category}</p>
+                  <h3 className="mt-2 truncate text-lg font-black tracking-[-0.06em] text-white">{project.title}</h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedVideoRatio(null)
+                    setSelectedProject(project)
+                  }}
+                  aria-label={`Play ${project.title}`}
+                  className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-[#FFB000] text-[#050505] shadow-[0_0_30px_rgba(255,176,0,0.4)]"
+                >
+                  <Play size={17} fill="currentColor" className="ml-0.5" />
+                </button>
+              </div>
             </motion.article>
           ))}
         </motion.div>
       </AnimatePresence>
+
+      <a href="#works-all" className="mx-auto mt-8 flex w-fit items-center justify-center rounded-full border border-[#FFB000]/50 bg-[#FFB000]/10 px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#FFB000] transition hover:bg-[#FFB000] hover:text-[#050505]">Show All Work</a>
 
       <AnimatePresence>
         {selectedProject && (
