@@ -38,6 +38,7 @@ export function VideoPreview({ project, controls = false }) {
 
 export default function Portfolio() {
   const [activeFilter, setActiveFilter] = useState('All')
+  const [showAllProjects, setShowAllProjects] = useState(false)
   const [selectedProject, setSelectedProject] = useState(null)
   const [selectedVideoRatio, setSelectedVideoRatio] = useState(null)
   const { projects: uploadedProjects, deletedIds } = useUploadedProjects()
@@ -48,6 +49,7 @@ export default function Portfolio() {
   const filteredProjects = activeFilter === 'All'
     ? allProjects
     : allProjects.filter((project) => (project.categories || [project.category]).includes(activeFilter))
+  const displayedProjects = showAllProjects ? filteredProjects : filteredProjects.slice(0, 6)
 
   return (
     <section id="works" className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
@@ -64,7 +66,10 @@ export default function Portfolio() {
           <button
             key={option}
             type="button"
-            onClick={() => setActiveFilter(option)}
+            onClick={() => {
+              setActiveFilter(option)
+              setShowAllProjects(false)
+            }}
             className={`rounded-full border px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.16em] transition sm:px-4 sm:text-xs sm:tracking-[0.2em] ${
               activeFilter === option
                 ? 'border-[#FFB000] bg-[#FFB000] text-[#050505]'
@@ -85,7 +90,7 @@ export default function Portfolio() {
           transition={{ duration: 0.3 }}
           className="flex snap-x snap-mandatory gap-4 overflow-x-auto scroll-smooth pb-3 sm:grid sm:gap-5 sm:overflow-visible sm:pb-0 md:grid-cols-2 xl:grid-cols-3"
         >
-          {filteredProjects.map((project, index) => (
+          {displayedProjects.map((project, index) => (
             <motion.article
               key={project.id}
               initial={{ opacity: 0, y: 24 }}
@@ -136,6 +141,16 @@ export default function Portfolio() {
           ))}
         </motion.div>
       </AnimatePresence>
+
+      {filteredProjects.length > 6 && (
+        <button
+          type="button"
+          onClick={() => setShowAllProjects((current) => !current)}
+          className="mx-auto mt-8 flex items-center justify-center rounded-full border border-[#FFB000]/50 bg-[#FFB000]/10 px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#FFB000] transition hover:bg-[#FFB000] hover:text-[#050505]"
+        >
+          {showAllProjects ? 'Show Less' : 'Show More'}
+        </button>
+      )}
 
       <a href="#works-all" className="mx-auto mt-8 flex w-fit items-center justify-center rounded-full border border-[#FFB000]/50 bg-[#FFB000]/10 px-6 py-3 text-xs font-bold uppercase tracking-[0.18em] text-[#FFB000] transition hover:bg-[#FFB000] hover:text-[#050505]">Show All Work</a>
 

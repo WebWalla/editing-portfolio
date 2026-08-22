@@ -132,7 +132,8 @@ export const projects = [
     client: 'sk_cuts8',
     style: 'Emotion catch edit',
     tools: ['Premiere Pro', 'After effects'],
-  },
+  },,
+  {"id":"local-1787385035608","title":"The Day of Comeback","category":"Gaming","categories":["Gaming"],"thumbnail":"","video":"/videos/1787385034221-comback-linked-comp-01-1-chf3-prob4.mp4","description":"A high-energy, motivational esports montage celebrating GodLike Esports and their championship run. The video features dynamic kinetic typography with retro CRT/glitch effects, blending intense PUBG Mobile/BGMI gameplay highlights with raw, emotional LAN tournament reactions and a massive trophy lift.","client":"Personal","style":"High-energy montage, fast-paced, kinetic typography, hype, glitch/CRT aesthetic","tools":["Adobe Premiere Pro","After Effects"]}
 ]
 
 export const processSteps = [

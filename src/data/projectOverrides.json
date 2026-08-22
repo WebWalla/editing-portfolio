@@ -1,5 +1,37 @@
 {
   "overrides": {
+    "1": {
+      "id": 1,
+      "title": "Gaming Montage",
+      "category": "Montages",
+      "categories": [
+        "Montages"
+      ],
+      "description": "High-energy competitive gameplay edit built around pacing, impact.",
+      "client": "Nebula Esports",
+      "style": "Fast-paced competitive edit",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "video": "/videos/2. Mid Efforts.mp4"
+    },
+    "2": {
+      "id": 2,
+      "title": "Gaming Montage",
+      "category": "Montages",
+      "categories": [
+        "Montages"
+      ],
+      "description": "A cinematic montage blending key plays, expressive transitions, and music-driven energy.",
+      "client": "Nebula Esports",
+      "style": "Cinematic montage edit",
+      "tools": [
+        "Premiere Pro",
+        "After effects"
+      ],
+      "video": "/videos/Nebula 10 Linked Comp 01.mp4"
+    },
     "4": {
       "id": 4,
       "title": "3D visuals",
@@ -15,8 +47,24 @@
         "After Effects"
       ],
       "video": "/videos/1. High Efforts.mp4"
+    },
+    "local-1787385035608": {
+      "id": "local-1787385035608",
+      "title": "The Day of Comeback",
+      "category": "Gaming",
+      "categories": [
+        "Gaming"
+      ],
+      "description": "A high-energy, motivational esports montage celebrating GodLike Esports and their championship run. The video features dynamic kinetic typography with retro CRT/glitch effects, blending intense PUBG Mobile/BGMI gameplay highlights with raw, emotional LAN tournament reactions and a massive trophy lift.",
+      "client": "Personal",
+      "style": "High-energy montage, fast-paced, kinetic typography, hype, glitch/CRT aesthetic",
+      "tools": [
+        "Adobe Premiere Pro",
+        "After Effects"
+      ],
+      "video": "/videos/1787385034221-comback-linked-comp-01-1-chf3-prob4.mp4"
     }
   },
   "deletedIds": [],
-  "featuredId": "4"
+  "featuredId": "local-1787385035608"
 }
