@@ -42,12 +42,12 @@ function localUploadPlugin() {
           ? new RegExp(`\\r?\\n  \\{\\r?\\n    id: ${escapedId},[\\s\\S]*?\\r?\\n  \\},?`)
           : new RegExp(`\\r?\\n  \\{\\"id\\":\\"${escapedId}\\"[^\\r\\n]*\\},?`)
         const nextList = list.replace(entryPattern, '')
-        if (nextList === list) return false
-        fs.writeFileSync(projectsPath, `${source.slice(0, start)}${nextList}${source.slice(end)}`)
         if (typeof video === 'string' && video.startsWith('/videos/')) {
           const videoPath = path.resolve('public', video.slice(1))
           if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath)
         }
+        if (nextList === list) return false
+        fs.writeFileSync(projectsPath, `${source.slice(0, start)}${nextList}${source.slice(end)}`)
         return true
       }
 
@@ -66,7 +66,7 @@ function localUploadPlugin() {
               if (action === 'delete' && id) {
                 removeProjectData(id, project?.video)
                 delete data.overrides[String(id)]
-                data.deletedIds = data.deletedIds.filter((deletedId) => String(deletedId) !== String(id))
+                data.deletedIds = [...new Set([...data.deletedIds, id])]
                 if (String(data.featuredId) === String(id)) data.featuredId = null
               }
               if (action === 'feature') data.featuredId = featured ? String(id) : null
