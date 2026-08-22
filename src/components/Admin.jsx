@@ -71,7 +71,8 @@ export default function Admin() {
   const deleteProject = async (id) => {
     if (!window.confirm('Delete this video from the portfolio?')) return
     if (import.meta.env.DEV) {
-      await fetch('/api/local-project-actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) })
+      const project = allProjects.find((item) => String(item.id) === String(id))
+      await fetch('/api/local-project-actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id, project: { video: project?.video } }) })
       setMessage('Deleted from projects.json. Refreshing...')
       window.setTimeout(() => window.location.reload(), 500)
       return

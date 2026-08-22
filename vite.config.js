@@ -29,6 +29,27 @@ function localUploadPlugin() {
       const overridesPath = path.resolve('src/data/projectOverrides.json')
       const readOverrides = () => JSON.parse(fs.readFileSync(overridesPath, 'utf8'))
       const writeOverrides = (data) => fs.writeFileSync(overridesPath, `${JSON.stringify(data, null, 2)}\n`)
+      const projectsPath = path.resolve('src/data/projects.js')
+
+      const removeProjectData = (id, video) => {
+        const source = fs.readFileSync(projectsPath, 'utf8')
+        const start = source.indexOf('export const projects = [')
+        const end = source.indexOf('\n]\n\nexport const processSteps', start)
+        const list = source.slice(start, end)
+        const escapedId = String(id).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        const isNumericId = Number.isInteger(id) || /^\d+$/.test(String(id))
+        const entryPattern = isNumericId
+          ? new RegExp(`\\r?\\n  \\{\\r?\\n    id: ${escapedId},[\\s\\S]*?\\r?\\n  \\},?`)
+          : new RegExp(`\\r?\\n  \\{\\"id\\":\\"${escapedId}\\"[^\\r\\n]*\\},?`)
+        const nextList = list.replace(entryPattern, '')
+        if (nextList === list) return false
+        fs.writeFileSync(projectsPath, `${source.slice(0, start)}${nextList}${source.slice(end)}`)
+        if (typeof video === 'string' && video.startsWith('/videos/')) {
+          const videoPath = path.resolve('public', video.slice(1))
+          if (fs.existsSync(videoPath)) fs.unlinkSync(videoPath)
+        }
+        return true
+      }
 
       server.middlewares.use((request, response, next) => {
         if (request.url === '/api/local-project-actions' && request.method === 'POST') {
@@ -38,8 +59,16 @@ function localUploadPlugin() {
             try {
               const { action, project, id, featured } = JSON.parse(body)
               const data = readOverrides()
-              if (action === 'save' && project) data.overrides[String(project.id)] = project
-              if (action === 'delete' && id) data.deletedIds = [...new Set([...data.deletedIds, id])]
+              if (action === 'save' && project) {
+                data.overrides[String(project.id)] = project
+                data.deletedIds = data.deletedIds.filter((deletedId) => String(deletedId) !== String(project.id))
+              }
+              if (action === 'delete' && id) {
+                removeProjectData(id, project?.video)
+                delete data.overrides[String(id)]
+                data.deletedIds = data.deletedIds.filter((deletedId) => String(deletedId) !== String(id))
+                if (String(data.featuredId) === String(id)) data.featuredId = null
+              }
               if (action === 'feature') data.featuredId = featured ? String(id) : null
               writeOverrides(data)
               sendJson(response, 200, { ok: true })
