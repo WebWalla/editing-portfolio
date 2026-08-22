@@ -1,5 +1,24 @@
 {
-  "overrides": {},
-  "deletedIds": [],
-  "featuredId": null
+  "overrides": {
+    "4": {
+      "id": 4,
+      "title": "3D visuals",
+      "category": "Shorts",
+      "categories": [
+        "Shorts"
+      ],
+      "description": "Vertical highlight package optimized for shorts, reels, and highlight loops.",
+      "client": "sk_cuts8",
+      "style": "Vertical short-form edit",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "video": "/videos/1. High Efforts.mp4"
+    }
+  },
+  "deletedIds": [
+    "local-1787381797194"
+  ],
+  "featuredId": "4"
 }
