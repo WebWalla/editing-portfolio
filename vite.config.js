@@ -26,7 +26,30 @@ function localUploadPlugin() {
         response.end(JSON.stringify(payload))
       }
 
+      const overridesPath = path.resolve('src/data/projectOverrides.json')
+      const readOverrides = () => JSON.parse(fs.readFileSync(overridesPath, 'utf8'))
+      const writeOverrides = (data) => fs.writeFileSync(overridesPath, `${JSON.stringify(data, null, 2)}\n`)
+
       server.middlewares.use((request, response, next) => {
+        if (request.url === '/api/local-project-actions' && request.method === 'POST') {
+          let body = ''
+          request.on('data', (chunk) => { body += chunk })
+          request.on('end', () => {
+            try {
+              const { action, project, id, featured } = JSON.parse(body)
+              const data = readOverrides()
+              if (action === 'save' && project) data.overrides[String(project.id)] = project
+              if (action === 'delete' && id) data.deletedIds = [...new Set([...data.deletedIds, id])]
+              if (action === 'feature') data.featuredId = featured ? String(id) : null
+              writeOverrides(data)
+              sendJson(response, 200, { ok: true })
+            } catch (error) {
+              sendJson(response, 400, { error: error.message })
+            }
+          })
+          return
+        }
+
         if (request.url !== '/api/local-projects' || request.method !== 'POST') {
           if (request.url === '/api/local-projects') return sendJson(response, 405, { error: 'Method not allowed.' })
           return next()
@@ -53,6 +76,10 @@ function localUploadPlugin() {
           style: request.body.style || 'Gaming video edit',
           tools: (request.body.tools || '').split(',').map((tool) => tool.trim()).filter(Boolean),
         }
+
+        const projectData = readOverrides()
+        if (request.body.featured === 'true') projectData.featuredId = project.id
+        writeOverrides(projectData)
 
         const projectsPath = path.resolve('src/data/projects.js')
         const source = fs.readFileSync(projectsPath, 'utf8')

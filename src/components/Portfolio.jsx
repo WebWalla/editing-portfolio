@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Play, X } from 'lucide-react'
 import { useState } from 'react'
-import { projects } from '../data/projects'
+import { publishedProjects } from '../data/publishedProjects'
 import { useUploadedProjects } from '../data/projectStore'
 
 const filterOptions = ['All', 'Esports', 'Montages', 'Reels', 'Shorts', 'Gaming']
@@ -42,7 +42,7 @@ export default function Portfolio() {
   const [selectedVideoRatio, setSelectedVideoRatio] = useState(null)
   const { projects: uploadedProjects, deletedIds } = useUploadedProjects()
   const managedIds = new Set(uploadedProjects.map((project) => project.id))
-  const currentProjects = projects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))
+  const currentProjects = publishedProjects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))
   const allProjects = [...uploadedProjects, ...currentProjects]
 
   const filteredProjects = activeFilter === 'All'

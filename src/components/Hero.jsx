@@ -1,11 +1,12 @@
 import { ArrowRight, Play, Sparkles, X } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { useUploadedProjects } from '../data/projectStore'
+import { publishedFeaturedId, publishedProjects } from '../data/publishedProjects'
 import { useState } from 'react'
 
 export default function Hero() {
   const { projects, featuredId } = useUploadedProjects()
-  const latestProject = projects.find((project) => String(project.id) === featuredId) || projects[0]
+  const latestProject = publishedProjects.find((project) => String(project.id) === (publishedFeaturedId || featuredId)) || projects.find((project) => String(project.id) === featuredId) || publishedProjects[0] || projects[0]
   const [isLatestOpen, setIsLatestOpen] = useState(false)
 
   return (

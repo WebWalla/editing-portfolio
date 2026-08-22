@@ -1,6 +1,6 @@
 import { ArrowLeft, Play } from 'lucide-react'
 import { useState } from 'react'
-import { projects } from '../data/projects'
+import { publishedProjects } from '../data/publishedProjects'
 import { useUploadedProjects } from '../data/projectStore'
 import { VideoPreview } from './Portfolio'
 
@@ -9,7 +9,7 @@ const filters = ['All', 'Esports', 'Montages', 'Reels', 'Shorts', 'Gaming']
 export default function WorksPage() {
   const { projects: uploadedProjects, deletedIds } = useUploadedProjects()
   const managedIds = new Set(uploadedProjects.map((project) => project.id))
-  const allProjects = [...uploadedProjects, ...projects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))]
+  const allProjects = [...uploadedProjects, ...publishedProjects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))]
   const [activeFilter, setActiveFilter] = useState('All')
   const visibleProjects = activeFilter === 'All' ? allProjects : allProjects.filter((project) => (project.categories || [project.category]).includes(activeFilter))
 

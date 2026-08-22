@@ -1,6 +1,7 @@
 import { Edit3, ExternalLink, Film, Plus, Save, Trash2, Upload, X } from 'lucide-react'
 import { useState } from 'react'
-import { projects as websiteProjects } from '../data/projects'
+import { publishedProjects as websiteProjects } from '../data/publishedProjects'
+import projectOverrides from '../data/projectOverrides.json'
 import { useUploadedProjects } from '../data/projectStore'
 
 const categories = ['Esports', 'Montages', 'Reels', 'Shorts', 'Gaming']
@@ -8,6 +9,7 @@ const emptyForm = { title: '', description: '', client: '', style: '', tools: ''
 
 export default function Admin() {
   const { projects, deletedIds, featuredId, saveProject, removeProject, setFeaturedProject } = useUploadedProjects()
+  const effectiveFeaturedId = projectOverrides.featuredId || featuredId
   const managedIds = new Set(projects.map((project) => project.id))
   const currentProjects = websiteProjects.filter((project) => !managedIds.has(project.id) && !deletedIds.includes(project.id))
   const allProjects = [...projects, ...currentProjects]
@@ -21,7 +23,7 @@ export default function Admin() {
   const editProject = (project) => {
     setEditingId(project.id)
     setForm({ title: project.title, description: project.description, client: project.client, style: project.style, tools: project.tools.join(', '), categories: project.categories || [project.category], videoFile: null, videoBlob: project.videoBlob || project.video })
-    setMakeLatest(featuredId === String(project.id))
+    setMakeLatest(effectiveFeaturedId === String(project.id))
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
@@ -38,12 +40,22 @@ export default function Admin() {
       formData.append('client', form.client.trim())
       formData.append('style', form.style.trim())
       formData.append('tools', form.tools)
+      formData.append('featured', String(makeLatest))
       const response = await fetch('/api/local-projects', { method: 'POST', body: formData })
       if (!response.ok) {
         setMessage('Could not save the video to the project folder.')
         return
       }
       setMessage('Saved to public/videos and projects.js. Refreshing...')
+      window.setTimeout(() => window.location.reload(), 500)
+      return
+    }
+
+    if (import.meta.env.DEV) {
+      const response = await fetch('/api/local-project-actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'save', project: { id: editingId, title: form.title.trim(), category: form.categories[0], categories: form.categories, description: form.description.trim() || 'Uploaded portfolio edit.', client: form.client.trim() || 'SK_CUTS8', style: form.style.trim() || 'Gaming video edit', tools: form.tools.split(',').map((tool) => tool.trim()).filter(Boolean), video: form.videoBlob } }) })
+      if (!response.ok) { setMessage('Could not save project changes.'); return }
+      await fetch('/api/local-project-actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'feature', id: editingId, featured: makeLatest }) })
+      setMessage('Saved to projects.json. Refreshing...')
       window.setTimeout(() => window.location.reload(), 500)
       return
     }
@@ -58,6 +70,12 @@ export default function Admin() {
 
   const deleteProject = async (id) => {
     if (!window.confirm('Delete this video from the portfolio?')) return
+    if (import.meta.env.DEV) {
+      await fetch('/api/local-project-actions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'delete', id }) })
+      setMessage('Deleted from projects.json. Refreshing...')
+      window.setTimeout(() => window.location.reload(), 500)
+      return
+    }
     await removeProject(id)
     setMessage('Video deleted.')
   }
@@ -82,7 +100,7 @@ export default function Admin() {
         <section>
           <div className="mb-5 flex items-end justify-between"><div><p className="text-xs uppercase tracking-[0.3em] text-[#FFB000]">Library</p><h2 className="mt-2 text-2xl font-black uppercase tracking-[-0.05em] text-white">Your videos</h2></div><span className="text-sm text-white/45">{allProjects.length} {allProjects.length === 1 ? 'video' : 'videos'}</span></div>
           <div className="grid gap-4 sm:grid-cols-2">
-            {projects.map((project) => <article key={project.id} className="overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0b0b0b]"><video src={project.video} controls preload="metadata" className="aspect-video w-full bg-black object-cover" /><div className="p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-[10px] uppercase tracking-[0.2em] text-[#FFB000]">{(project.categories || [project.category]).join(' / ')}</p><h3 className="mt-2 text-xl font-black uppercase tracking-[-0.05em] text-white">{project.title}</h3>{featuredId === String(project.id) && <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-[#FFB000]">Homepage latest edit</p>}</div><div className="flex gap-1"><button type="button" onClick={() => editProject(project)} aria-label={`Edit ${project.title}`} className="p-2 text-white/55 hover:text-[#FFB000]"><Edit3 size={16} /></button><button type="button" onClick={() => deleteProject(project.id)} aria-label={`Delete ${project.title}`} className="p-2 text-white/55 hover:text-red-400"><Trash2 size={16} /></button></div></div></div></article>)}
+            {projects.map((project) => <article key={project.id} className="overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0b0b0b]"><video src={project.video} controls preload="metadata" className="aspect-video w-full bg-black object-cover" /><div className="p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-[10px] uppercase tracking-[0.2em] text-[#FFB000]">{(project.categories || [project.category]).join(' / ')}</p><h3 className="mt-2 text-xl font-black uppercase tracking-[-0.05em] text-white">{project.title}</h3>{effectiveFeaturedId === String(project.id) && <p className="mt-2 text-[10px] uppercase tracking-[0.18em] text-[#FFB000]">Homepage latest edit</p>}</div><div className="flex gap-1"><button type="button" onClick={() => editProject(project)} aria-label={`Edit ${project.title}`} className="p-2 text-white/55 hover:text-[#FFB000]"><Edit3 size={16} /></button><button type="button" onClick={() => deleteProject(project.id)} aria-label={`Delete ${project.title}`} className="p-2 text-white/55 hover:text-red-400"><Trash2 size={16} /></button></div></div></div></article>)}
             {currentProjects.map((project) => <article key={project.id} className="overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#0b0b0b]"><video src={project.video} controls preload="metadata" className="aspect-video w-full bg-black object-cover" /><div className="p-5"><div className="flex items-start justify-between gap-3"><div><p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Current website video</p><h3 className="mt-2 text-xl font-black uppercase tracking-[-0.05em] text-white">{project.title}</h3></div><div className="flex gap-1"><button type="button" onClick={() => editProject(project)} aria-label={`Edit ${project.title}`} className="p-2 text-white/55 hover:text-[#FFB000]"><Edit3 size={16} /></button><button type="button" onClick={() => deleteProject(project.id)} aria-label={`Delete ${project.title}`} className="p-2 text-white/55 hover:text-red-400"><Trash2 size={16} /></button></div></div></div></article>)}
           </div>
           {!allProjects.length && <div className="rounded-[1.5rem] border border-dashed border-white/10 p-10 text-center text-white/45"><Film className="mx-auto mb-3" size={28} /><p>No videos yet.</p></div>}
