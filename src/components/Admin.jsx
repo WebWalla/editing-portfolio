@@ -28,6 +28,26 @@ export default function Admin() {
   const submit = async (event) => {
     event.preventDefault()
     if (!form.title.trim() || !form.categories.length || (!form.videoFile && !editingId)) return
+
+    if (import.meta.env.DEV && form.videoFile && !editingId) {
+      const formData = new FormData()
+      formData.append('video', form.videoFile)
+      formData.append('title', form.title.trim())
+      formData.append('categories', JSON.stringify(form.categories))
+      formData.append('description', form.description.trim())
+      formData.append('client', form.client.trim())
+      formData.append('style', form.style.trim())
+      formData.append('tools', form.tools)
+      const response = await fetch('/api/local-projects', { method: 'POST', body: formData })
+      if (!response.ok) {
+        setMessage('Could not save the video to the project folder.')
+        return
+      }
+      setMessage('Saved to public/videos and projects.js. Refreshing...')
+      window.setTimeout(() => window.location.reload(), 500)
+      return
+    }
+
     const projectId = editingId || `upload-${Date.now()}`
     await saveProject({ id: projectId, title: form.title.trim(), category: form.categories[0], categories: form.categories, description: form.description.trim() || 'Uploaded portfolio edit.', client: form.client.trim() || 'SK_CUTS8', style: form.style.trim() || 'Gaming video edit', tools: form.tools.split(',').map((tool) => tool.trim()).filter(Boolean), videoBlob: form.videoBlob }, form.videoFile)
     if (makeLatest) setFeaturedProject(String(projectId))
