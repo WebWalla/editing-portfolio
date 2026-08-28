@@ -63,8 +63,24 @@
         "After Effects"
       ],
       "video": "/videos/1787385034221-comback-linked-comp-01-1-chf3-prob4.mp4"
+    },
+    "local-1787896180974": {
+      "id": "local-1787896180974",
+      "title": "Goblin's Reign: \"I Am Still The Dangerous Player\"",
+      "category": "Esports",
+      "categories": [
+        "Esports"
+      ],
+      "description": "The video kicks off with a confident interview snippet declaring his dominance, followed by custom 3D animations, heavy VFX, and aggressive beat-synced clutch moments from the Nodwin Gaming Masters Series.",
+      "client": "Personal Project",
+      "style": "High-impact sync, VFX-heavy, aggressive montage, fast-paced transitions",
+      "tools": [
+        "Premiere Pro",
+        "After Effects"
+      ],
+      "video": "/videos/1787896180590-goblin-linked-comp-01.mp4"
     }
   },
   "deletedIds": [],
-  "featuredId": "local-1787385035608"
+  "featuredId": "local-1787896180974"
 }
